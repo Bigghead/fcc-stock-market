@@ -21,8 +21,17 @@ app.get('/', function(req, res){
   quandl.dataset({
   source: "WIKI",
   table: "FB"
-},function(err, quandl){
-  res.send(quandl);
+}, {
+  start_date: "2015-01-30",
+  end_date: "2016-01-29",
+  column_index: 4
+}, function(err, stockData){
+  var stock = JSON.parse(stockData).dataset;
+  var highData = stock.data.map(function(d){
+   return [new Date(d[0]).getTime(), d[1]];
+ });
+  console.log(highData);
+  res.render('landing', {highData : highData});
 });
 
 });

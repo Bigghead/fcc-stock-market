@@ -23,27 +23,24 @@
 
 <script type="text/javascript">
 $(function () {
+
+  var highData = <%- JSON.stringify(highData) %>;
+  console.log(highData);
   var myChart = Highcharts.chart('container', {
       chart: {
           type: 'line'
       },
       title: {
-          text: 'Fruit Consumption'
-      },
-      xAxis: {
-          categories: ['Apples', 'Bananas', 'Oranges']
+          text: 'Facebook Prices For The Year'
       },
       yAxis: {
           title: {
-              text: 'Fruit eaten'
+              text: 'price'
           }
       },
       series: [{
-          name: 'Jane',
-          data: [1, 0, 4]
-      }, {
-          name: 'John',
-          data: [5, 7, 3]
+          name: 'Facebook',
+          data: highData
       }]
   });
 });
