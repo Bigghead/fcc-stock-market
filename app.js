@@ -22,16 +22,17 @@ app.get('/', function(req, res){
   source: "WIKI",
   table: "FB"
 }, {
-  start_date: "2015-01-30",
-  end_date: "2016-01-29",
+  start_date: "2016-01-01",
+  end_date: "2016-12-30",
   column_index: 4
 }, function(err, stockData){
   var stock = JSON.parse(stockData).dataset;
-  var highData = stock.data.map(function(d){
-   return [new Date(d[0]).getTime(), d[1]];
- });
-  console.log(highData);
-  res.render('landing', {highData : highData});
+ //  var highData = stock.data.map(function(d){
+ //   return [new Date(d[0]).getTime(), d[1]];
+ // });
+ stockPrices = stock.data.reverse();
+  console.log(stockPrices);
+  res.render('landing', {stockPrices : stockPrices});
 });
 
 });
