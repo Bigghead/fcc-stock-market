@@ -1,16 +1,30 @@
-var express  = require('express'),
-    mongoose = require('mongoose'),
+var express     = require('express'),
+    mongoose    = require('mongoose'),
     Highcharts  = require('highcharts'),
-    app      = express();
-
+    quandlKey   = require('./apiKeys'),
+    Quandl      = require('quandl'),
+    app         = express();
 
 app.set('view engine', 'ejs');
 
 
 app.use(express.static(__dirname + '/public'));
 
+
+//=========QUANDL CONFIG========
+var quandl = new Quandl({
+  auth_token: quandlKey.Key,
+  api_version: 3
+})
+
 app.get('/', function(req, res){
-  res.render('landing');
+  quandl.dataset({
+  source: "WIKI",
+  table: "FB"
+},function(err, quandl){
+  res.send(quandl);
+});
+
 });
 
 app.listen('9000', function(){

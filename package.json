@@ -20,6 +20,7 @@
     "ejs": "^2.5.5",
     "express": "^4.14.0",
     "highcharts": "^5.0.6",
-    "mongoose": "^4.7.6"
+    "mongoose": "^4.7.6",
+    "quandl": "0.0.6"
   }
 }
