@@ -14,9 +14,14 @@
   </head>
   <body>
 
-    <div class="container">
-      <h1>Hello</h1>
+    <div class="container center-align">
+      <h1 class=''>Hello</h1>
+      <form class="align-right" action="/" method="post">
+        <input type="text" name="stockName" value="" placeholder="New Stock Symbol">
+        <button type="submit" name="button">New Stock</button>
+      </form>
       <div id="container" style="width:100%; height:600px;"></div>
+
 
     </div>
 
@@ -31,7 +36,7 @@ $(function () {
           type: 'line'
       },
       title: {
-          text: 'Facebook Prices For The Year'
+          text: 'Prices For The Year'
       },
       yAxis: {
           title: {
@@ -39,7 +44,7 @@ $(function () {
           }
       },
       series: [{
-          name: 'Facebook',
+          name: <%- JSON.stringify(stockName)%> ,
           data: stockPrices
       }]
   });
