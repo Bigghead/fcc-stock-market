@@ -37,10 +37,9 @@ app.get('/', function(req, res){
  //   return [new Date(d[0]).getTime(), d[1]];
  // });
  stockPrices = stock.data.reverse();
-  console.log(stockPrices);
   res.render('landing', {stockPrices : stockPrices, stockName : stockName});
-      }
-    });
+    }
+  });
 });
 
 
@@ -54,13 +53,19 @@ app.post('/', function(req, res){
   end_date: "2016-12-30",
   column_index: 4
 }, function(err, stockData){
+
+  //=======If Stock Name isn't a Nasdaq, redirect back to home page
+  if(JSON.parse(stockData).quandl_error){
+    console.log(err);
+    res.redirect('/');
+  } else {
   var stock = JSON.parse(stockData).dataset;
  //  var highData = stock.data.map(function(d){
  //   return [new Date(d[0]).getTime(), d[1]];
  // });
  stockPrices = stock.data.reverse();
-  console.log(stockPrices);
   res.render('landing', {stockPrices : stockPrices, stockName: stockName});
+    }
   });
 })
 
