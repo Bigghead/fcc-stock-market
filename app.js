@@ -1,21 +1,37 @@
 var express     = require('express'),
     mongoose    = require('mongoose'),
     Highcharts  = require('highcharts'),
-    quandlKey   = require('./apiKeys'),
+    keys        = require('./apiKeys'),
     Quandl      = require('quandl'),
     bodyParser  = require('body-parser'),
     app         = express();
 
+//=======DATABASE=====
+mongoose.connect('mongodb://'+ keys.mongoUser +':'+ keys.mongoPass +'@ds111469.mlab.com:11469/fcc-stocks');
+
+var stockSchema = new mongoose.Schema({
+  name: String
+});
+
+var Stock = mongoose.model('Stock', stockSchema);
+Stock.create({
+  name: 'AAPL'
+}, function(err, saved){
+  if(err){
+    console.log(err);
+  } else {
+    console.log('Saved ' + saved.name);
+  }
+});
+
 app.set('view engine', 'ejs');
-
-
 app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.urlencoded({extended: true}));
 
 
 //=========QUANDL CONFIG========
 var quandl = new Quandl({
-  auth_token: quandlKey.Key,
+  auth_token: keys.Key,
   api_version: 3
 })
 
