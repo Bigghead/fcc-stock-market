@@ -4,6 +4,7 @@ var express     = require('express'),
     keys        = require('./apiKeys'),
     Quandl      = require('quandl'),
     bodyParser  = require('body-parser'),
+    Async       = require('async'),
     app         = express();
 
 //=======DATABASE=====
@@ -13,16 +14,16 @@ var stockSchema = new mongoose.Schema({
   name: String
 });
 
-var Stock = mongoose.model('Stock', stockSchema);
-Stock.create({
-  name: 'AAPL'
-}, function(err, saved){
-  if(err){
-    console.log(err);
-  } else {
-    console.log('Saved ' + saved.name);
-  }
-});
+var Stocks = mongoose.model('Stock', stockSchema);
+// Stock.create({
+//   name: 'FB'
+// }, function(err, saved){
+//   if(err){
+//     console.log(err);
+//   } else {
+//     console.log('Saved ' + saved.name);
+//   }
+// });
 
 app.set('view engine', 'ejs');
 app.use(express.static(__dirname + '/public'));
@@ -37,8 +38,32 @@ var quandl = new Quandl({
 
 
 app.get('/', function(req, res){
-  res.render('landing');
-})
+  var array = [];
+  Stocks.find({}, function(err, stocks){
+    if(err){
+      console.log(err);
+    } else {
+      // Async.each(stocks, function(stock, callback){
+      //   array.push(stock.name);
+      //   callback();
+      // }, function(err){
+      //   if(err){
+      //     console.log(err);
+      //   } else {
+      //     console.log('hello');
+      //     console.log(array);
+      //   }
+      // });
+      for(var i = 0 ; i < stocks.length; i ++){
+        array.push(stocks[i].name);
+        console.log(stocks[i].name);
+      }
+      console.log(array);
+      res.render('landing', { stockNames : array});
+    }
+  });
+});
+
 
 // app.get('/', function(req, res){
 //   var stockName = 'FB';

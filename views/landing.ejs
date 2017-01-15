@@ -9,10 +9,13 @@
   integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
   crossorigin="anonymous"></script>
   <script src="http://code.highcharts.com/stock/highstock.js"></script>
+  <script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
+
 
 
   </head>
   <body>
+
 
     <div class="container center-align">
       <h1 class=''>Hello</h1>
@@ -28,9 +31,11 @@
 
 <script type="text/javascript">
 $(function () {
+
+
     var seriesOptions = [],
         seriesCounter = 0,
-        names = ['MSFT', 'AAPL', 'GOOG'];
+        names = ['FB', 'AAPL', 'TSLA'];
 
     /**
      * Create the chart when all data is loaded
@@ -76,8 +81,9 @@ $(function () {
 
     $.each(names, function (i, name) {
 
-        $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=' + name.toLowerCase() + '-c.json&callback=?',    function (data) {
-
+      $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=' + name.toLowerCase() + '-c.json&callback=?',    function (data) {
+          console.log(name);
+          console.log(data);
             seriesOptions[i] = {
                 name: name,
                 data: data
@@ -93,7 +99,6 @@ $(function () {
         });
     });
 });
-
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
 
