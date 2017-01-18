@@ -14,8 +14,7 @@ var express     = require('express'),
 mongoose.connect('mongodb://'+ keys.mongoUser +':'+ keys.mongoPass +'@ds111469.mlab.com:11469/fcc-stocks');
 
 var stockSchema = new mongoose.Schema({
-  name: String,
-  data: []
+  name: String
 });
 
 var Stocks = mongoose.model('Stock', stockSchema);
@@ -53,43 +52,36 @@ app.get('/', function(req, res){
     if(err){
       console.log(err);
     } else {
-      Async.each(stocks, function(stock, callback){
-        array.push(stock.name);
-        callback();
-      }, function(err){
-        if(err){
-          console.log(err);
-        } else {
-          res.render('landing', { stockNames : array, apiKey : keys.Key});
-        }
-      });
+      console.log(stocks);
+      res.render('landing', { stockNames : stocks, apiKey : keys.Key});
+
     }
   });
 });
 
 
-app.get('/', function(req, res){
-  var stockName = 'FB';
-  quandl.dataset({
-  source: "WIKI",
-  table: stockName
-}, {
-  start_date: "2016-01-01",
-  end_date: "2016-12-30",
-  column_index: 4
-}, function(err, stockData){
-  if(err){
-    console.log(err);
-  } else {
-  var stock = JSON.parse(stockData).dataset;
- //  var highData = stock.data.map(function(d){
- //   return [new Date(d[0]).getTime(), d[1]];
- // });
- stockPrices = stock.data.reverse();
-  res.render('landing', {stockPrices : stockPrices, stockName : stockName, apiKey : keys.Key});
-    }
-  });
-});
+// app.get('/', function(req, res){
+//   var stockName = 'FB';
+//   quandl.dataset({
+//   source: "WIKI",
+//   table: stockName
+// }, {
+//   start_date: "2016-01-01",
+//   end_date: "2016-12-30",
+//   column_index: 4
+// }, function(err, stockData){
+//   if(err){
+//     console.log(err);
+//   } else {
+//   var stock = JSON.parse(stockData).dataset;
+//  //  var highData = stock.data.map(function(d){
+//  //   return [new Date(d[0]).getTime(), d[1]];
+//  // });
+//  stockPrices = stock.data.reverse();
+//   res.render('landing', {stockPrices : stockPrices, stockName : stockName, apiKey : keys.Key});
+//     }
+//   });
+// });
 
 
 app.post('/', function(req, res){

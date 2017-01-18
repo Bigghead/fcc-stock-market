@@ -31,11 +31,17 @@
 <script type="text/javascript">
 $(function () {
 
+  var seriesOptions = [],
+      seriesCounter = 0,
+      names = [];
 
-    var seriesOptions = [],
-        seriesCounter = 0,
-        names = <%- JSON.stringify(stockNames) %>;
-        console.log(names);
+  var stocks =  <%- JSON.stringify(stockNames) %>;
+  console.log(stocks[0].name);
+  stocks.forEach(function(stock){
+    names.push(stock.name);
+  });
+
+
 
     /**
      * Create the chart when all data is loaded
