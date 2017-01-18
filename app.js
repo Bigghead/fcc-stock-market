@@ -47,33 +47,31 @@ var quandl = new Quandl({
 })
 
 
-// app.get('/', function(req, res){
-//   var array = [];
-//   Stocks.find({}, function(err, stocks){
-//     if(err){
-//       console.log(err);
-//     } else {
-//       // Async.each(stocks, function(stock, callback){
-//       //   array.push(stock.name);
-//       //   callback();
-//       // }, function(err){
-//       //   if(err){
-//       //     console.log(err);
-//       //   } else {
-//       //     console.log('hello');
-//       //     console.log(array);
-//       //   }
-//       // });
-//       for(var i = 0 ; i < stocks.length; i ++){
-//         array.push(stocks[i].name);
-//         console.log(stocks[i].name);
-//       }
-//       console.log(array);
-//       console.log(res.header);
-//       res.render('landing', { stockNames : array});
-//     }
-//   });
-// });
+app.get('/', function(req, res){
+  var array = [];
+  Stocks.find({}, function(err, stocks){
+    if(err){
+      console.log(err);
+    } else {
+      Async.each(stocks, function(stock, callback){
+        array.push(stock.name);
+        callback();
+      }, function(err){
+        if(err){
+          console.log(err);
+        } else {
+          console.log('hello');
+          console.log(array);
+        }
+      });
+      for(var i = 0 ; i < stocks.length; i ++){
+        array.push(stocks[i].name);
+        console.log(stocks[i].name);
+      }
+      res.render('landing', { stockNames : array, apiKey : keys.Key});
+    }
+  });
+});
 
 
 app.get('/', function(req, res){

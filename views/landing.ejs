@@ -34,7 +34,8 @@ $(function () {
 
     var seriesOptions = [],
         seriesCounter = 0,
-        names = ['MSFT', 'AAPL', 'GOOG'];
+        names = <%- JSON.stringify(stockNames) %>;
+        console.log(names);
 
     /**
      * Create the chart when all data is loaded
@@ -77,37 +78,27 @@ $(function () {
             series: seriesOptions
         });
     }
-    $.getJSON('https://www.quandl.com/api/v3/datasets/WIKI/<%- stockName %>.json?api_key=<%= apiKey %>', function(data){
-      var priceData = data.dataset.data.map(function(stockPrice){
-        return [new Date(stockPrice[0]).getTime(), stockPrice[4]];
-      }).reverse();
-      console.log(priceData);
-      seriesOptions.push({
-        name: 'FB',
-        data: priceData
-      });
-      createChart();
 
+    $.each(names, function (i, name) {
+
+      $.getJSON('https://www.quandl.com/api/v3/datasets/WIKI/'+ name + '.json?api_key=<%= apiKey %>',    function (data) {
+        var priceData = data.dataset.data.map(function(stockPrice){
+          return [new Date(stockPrice[0]).getTime(), stockPrice[4]];
+        }).reverse();
+            seriesOptions[i] = {
+                name: name,
+                data: priceData
+            };
+
+            // As we're loading the data asynchronously, we don't know what order it will arrive. So
+            // we keep a counter and create the chart when all the data is loaded.
+            seriesCounter += 1;
+
+            if (seriesCounter === names.length) {
+                createChart();
+            }
+        });
     });
-    // $.each(names, function (i, name) {
-    //
-    //   $.getJSON('https://www.quandl.com/api/v3/datatables/WIKI/PRICES.json?date.gte=20150101&date.lt=20160101&ticker=MSFT,FB&api_key=etZejQ521yXnNpBQdd8_',    function (data) {
-    //       console.log(name);
-    //       console.log(data);
-    //         seriesOptions[i] = {
-    //             name: name,
-    //             data: data
-    //         };
-    //
-    //         // As we're loading the data asynchronously, we don't know what order it will arrive. So
-    //         // we keep a counter and create the chart when all the data is loaded.
-    //         seriesCounter += 1;
-    //
-    //         if (seriesCounter === names.length) {
-    //             createChart();
-    //         }
-    //     });
-    // });
 });
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
