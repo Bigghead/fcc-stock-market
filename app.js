@@ -60,15 +60,9 @@ app.get('/', function(req, res){
         if(err){
           console.log(err);
         } else {
-          console.log('hello');
-          console.log(array);
+          res.render('landing', { stockNames : array, apiKey : keys.Key});
         }
       });
-      for(var i = 0 ; i < stocks.length; i ++){
-        array.push(stocks[i].name);
-        console.log(stocks[i].name);
-      }
-      res.render('landing', { stockNames : array, apiKey : keys.Key});
     }
   });
 });
