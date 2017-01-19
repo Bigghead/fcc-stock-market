@@ -18,15 +18,7 @@ var stockSchema = new mongoose.Schema({
 });
 
 var Stocks = mongoose.model('Stock', stockSchema);
-// Stock.create({
-//   name: 'FB'
-// }, function(err, saved){
-//   if(err){
-//     console.log(err);
-//   } else {
-//     console.log('Saved ' + saved.name);
-//   }
-// });
+
 
 app.set('view engine', 'ejs');
 app.use(express.static(__dirname + '/public'));
@@ -53,13 +45,13 @@ app.get('/', function(req, res){
       console.log(err);
     } else {
       res.render('landing', { stockNames : stocks, apiKey : keys.Key});
-
     }
   });
 });
 
 
 app.post('/', function(req, res){
+  res.setHeader('Access-Control-Allow-Origin','*');
   var stockName = req.body.stockName.toUpperCase();
 
   Stocks.create({
