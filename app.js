@@ -61,53 +61,53 @@ app.post('/test', function(req, res){
 
   //Check if we have the stock in db
   //If yes, redirect, don't let them add the same stock
-  Stocks.find({name: stockName}, function(err, foundStock){
-    if(err){
-      console.log(err);
+
+Stocks.findOne({name: stockName}, function(err, foundStock){
+  if(err){
+    console.log(err);
+  } else {
+    if(foundStock !== null){
+      res.redirect('/test');
     } else {
-      console.log(foundStock === undefined);
-      if(foundStock !== undefined){
-        res.redirect('/test');
-      } else {
 
 
-        //otherwise, fetch quandl data, put into db, and redirect to show all stocks
-        quandl.dataset({
-          source: 'WIKI',
-          table: stockName
-        },{
-          start_date: "2016-01-01",
-          end_date: "2016-12-30",
-          column_index: 4
-        },function(err, stockData){
-           //=======If Stock Name isn't a Nasdaq, redirect back to home page
-            if(JSON.parse(stockData).quandl_error){
-            console.log(err);
-            res.redirect('/test');
-          } else {
-            var stock = JSON.parse(stockData).dataset;
-             var highData = stock.data.map(function(d){
-              return [new Date(d[0]).getTime(), d[1]];
-            });
-            stockPrices = highData.reverse();
-            Stocks.create({
-              name: stockName,
-              data : stockPrices
-            }, function(err, madeStock){
-              if(err){
-                console.log(err);
-              } else {
-                madeStock.save();
-                res.redirect('/test');
-              }
-            }); //end stocks.create
-          }
-        });
+      //otherwise, fetch quandl data, put into db, and redirect to show all stocks
+      quandl.dataset({
+        source: 'WIKI',
+        table: stockName
+      },{
+        start_date: "2016-01-01",
+        end_date: "2016-12-30",
+        column_index: 4
+      },function(err, stockData){
+         //=======If Stock Name isn't a Nasdaq, redirect back to home page
+          if(JSON.parse(stockData).quandl_error){
+          console.log(err);
+          res.redirect('/test');
+        } else {
+          var stock = JSON.parse(stockData).dataset;
+           var highData = stock.data.map(function(d){
+            return [new Date(d[0]).getTime(), d[1]];
+          });
+          stockPrices = highData.reverse();
+          Stocks.create({
+            name: stockName,
+            data : stockPrices
+          }, function(err, madeStock){
+            if(err){
+              console.log(err);
+            } else {
+              madeStock.save();
+              res.redirect('/test');
+            }
+          }); //end stocks.create
+        }
+      });
 
-
-      }//end stocks.find
     }
-  });
+  }
+})
+
 
 });
 
