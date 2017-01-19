@@ -4,7 +4,7 @@ var express     = require('express'),
     keys        = require('./apiKeys'),
     bodyParser  = require('body-parser'),
     Async       = require('async'),
-    cors        = require('cors'),
+    Method      = require('method-override'),
     Quandl      = require('quandl'),
     app         = express();
 
@@ -31,6 +31,8 @@ app.use(function(req, res, next){
 
   next();
 });
+app.use(Method('_method'));
+
 
 //=========QUANDL CONFIG========
 var quandl = new Quandl({
@@ -84,7 +86,20 @@ app.post('/test', function(req, res){
       });
     }
   });
-})
+});
+
+app.get('/test/:id', function(req, res){
+  var id = req.params.id;
+
+  Stocks.findByIdAndRemove(id, function(err, delStock){
+    if(err){
+      console.log(err);
+    } else {
+      console.log(delStock.name);
+      res.redirect('/test');
+    }
+  });
+});
 
 app.listen('9000', function(){
   console.log('Stock Chart Starting!');
