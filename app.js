@@ -76,8 +76,8 @@ Stocks.findOne({name: stockName}, function(err, foundStock){
         source: 'WIKI',
         table: stockName
       },{
-        start_date: "2016-01-01",
-        end_date: "2016-12-30",
+        // start_date: "2016-01-01",
+        // end_date: "2016-12-30",
         column_index: 4
       },function(err, stockData){
          //=======If Stock Name isn't a Nasdaq, redirect back to home page
