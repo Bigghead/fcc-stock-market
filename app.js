@@ -39,39 +39,13 @@ var quandl = new Quandl({
 })
 
 
-app.get('/', function(req, res){
-  var array = [];
-  Stocks.find({}, function(err, stocks){
-    if(err){
-      console.log(err);
-    } else {
-      res.render('landing', { stockNames : stocks, apiKey : keys.Key});
-    }
-  });
-});
 
-
-app.post('/', function(req, res){
-  res.setHeader('Access-Control-Allow-Origin','*');
-  var stockName = req.body.stockName.toUpperCase();
-
-  Stocks.create({
-    name: stockName
-  }, function(err, madeStock){
-    if(err){
-      console.log(err);
-    } else {
-    res.redirect('/');
-    }
-  });
-});
 
 app.get('/test', function(req, res){
   Stocks.find({}, function(err, foundStocks){
     if(err){
       console.log(err);
     } else {
-      console.log(foundStocks);
       res.render('test' ,{stocks: foundStocks});
     }
   });
@@ -87,8 +61,10 @@ app.post('/test', function(req, res){
     end_date: "2016-12-30",
     column_index: 4
   },function(err, stockData){
-    if(err){
+     //=======If Stock Name isn't a Nasdaq, redirect back to home page
+      if(JSON.parse(stockData).quandl_error){
       console.log(err);
+      res.redirect('/test');
     } else {
       var stock = JSON.parse(stockData).dataset;
        var highData = stock.data.map(function(d){
@@ -102,6 +78,7 @@ app.post('/test', function(req, res){
         if(err){
           console.log(err);
         } else {
+          madeStock.save();
           res.redirect('/test');
         }
       });
