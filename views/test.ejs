@@ -1,0 +1,101 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.min.css">
+    <script
+  src="https://code.jquery.com/jquery-3.1.1.min.js"
+  integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+  crossorigin="anonymous"></script>
+  <script src="http://code.highcharts.com/stock/highstock.js"></script>
+  <script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
+
+
+
+  </head>
+  <body>
+
+
+    <div class="container center-align">
+      <h1 class=''>Hello</h1>
+      <form class="center-align" action="/" method="post">
+        <input class='center-align'type="text" name="stockName" value="" placeholder="New Stock Symbol" autofocus>
+        <button class='waves-effect waves-light btn' type="submit">New Stock</button>
+      </form>
+      <div id="container" style="width:100%; height:600px;"></div>
+
+
+    </div>
+
+
+<script type="text/javascript">
+$(function () {
+
+var stocks = <%- JSON.stringify(stocks)%>;
+  var seriesOptions = [],
+      seriesCounter = 0;
+
+  console.log(stocks);
+
+
+
+    /**
+     * Create the chart when all data is loaded
+     * @returns {undefined}
+     */
+    function createChart() {
+
+        Highcharts.stockChart('container', {
+
+            rangeSelector: {
+                selected: 4
+            },
+
+            yAxis: {
+                labels: {
+                    formatter: function () {
+                        return (this.value > 0 ? ' + ' : '') + this.value + '%';
+                    }
+                },
+                plotLines: [{
+                    value: 0,
+                    width: 2,
+                    color: 'silver'
+                }]
+            },
+
+            plotOptions: {
+                series: {
+                    compare: 'percent',
+                    showInNavigator: true
+                }
+            },
+
+            tooltip: {
+                pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.change}%)<br/>',
+                valueDecimals: 2,
+                split: true
+            },
+
+            series: seriesOptions
+        });
+    }
+    stocks.forEach(function(stock){
+      seriesOptions.push({
+        name: stock.name,
+        data: stock.data
+      });
+
+      seriesCounter += 1;
+
+      if (seriesCounter === stocks.length) {
+          createChart();
+      }
+  });
+
+});
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
+
+  </body>
+</html>

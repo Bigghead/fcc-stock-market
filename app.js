@@ -2,10 +2,10 @@ var express     = require('express'),
     mongoose    = require('mongoose'),
     Highcharts  = require('highcharts'),
     keys        = require('./apiKeys'),
-    Quandl      = require('quandl'),
     bodyParser  = require('body-parser'),
     Async       = require('async'),
     cors        = require('cors'),
+    Quandl      = require('quandl'),
     app         = express();
 
 
@@ -14,7 +14,8 @@ var express     = require('express'),
 mongoose.connect('mongodb://'+ keys.mongoUser +':'+ keys.mongoPass +'@ds111469.mlab.com:11469/fcc-stocks');
 
 var stockSchema = new mongoose.Schema({
-  name: String
+  name: String,
+  data: []
 });
 
 var Stocks = mongoose.model('Stock', stockSchema);
@@ -61,6 +62,36 @@ app.post('/', function(req, res){
       console.log(err);
     } else {
     res.redirect('/');
+    }
+  });
+});
+
+app.get('/test', function(req, res){
+  quandl.dataset({
+    source: 'WIKI',
+    table: 'FB'
+  },{
+    start_date: "2016-01-01",
+    end_date: "2016-12-30",
+    column_index: 4
+  }, function(err, stockData){
+    if(err){
+      console.log(err);
+    } else {
+      var stock = JSON.parse(stockData).dataset;
+       var highData = stock.data.map(function(d){
+        return [new Date(d[0]).getTime(), d[1]];
+      });
+      stockPrices = highData.reverse();
+      console.log(stockPrices);
+      Stocks.find({}, function(err, foundStocks){
+        if(err){
+          console.log(err);
+        } else {
+          console.log(foundStocks);
+          res.render('test' ,{stocks: foundStocks});
+        }
+      })
     }
   });
 });
