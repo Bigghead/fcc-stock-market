@@ -42,7 +42,7 @@ var quandl = new Quandl({
 
 
 
-
+//==============SHOW ALL STOCK LINES ON CHART=====
 app.get('/test', function(req, res){
   Stocks.find({}, function(err, foundStocks){
     if(err){
@@ -53,9 +53,11 @@ app.get('/test', function(req, res){
   });
 });
 
+
+
+//===========ADD A NEW STOCK ONTO CHART=======
 app.post('/test', function(req, res){
   var stockName = req.body.stockName.toUpperCase();
-
 
   //Check if we have the stock in db
   //If yes, redirect, don't let them add the same stock
@@ -98,16 +100,20 @@ app.post('/test', function(req, res){
                 madeStock.save();
                 res.redirect('/test');
               }
-            });
+            }); //end stocks.create
           }
         });
 
-      }
+
+      }//end stocks.find
     }
   });
 
 });
 
+
+
+//==========REMOVE STOCK FROM HOMEPAGE CHART========
 app.get('/test/:id', function(req, res){
   var id = req.params.id;
 
