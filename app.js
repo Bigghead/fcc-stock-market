@@ -67,14 +67,26 @@ app.post('/', function(req, res){
 });
 
 app.get('/test', function(req, res){
+  Stocks.find({}, function(err, foundStocks){
+    if(err){
+      console.log(err);
+    } else {
+      console.log(foundStocks);
+      res.render('test' ,{stocks: foundStocks});
+    }
+  });
+});
+
+app.post('/test', function(req, res){
+  var stockName = req.body.stockName.toUpperCase();
   quandl.dataset({
     source: 'WIKI',
-    table: 'FB'
+    table: stockName
   },{
     start_date: "2016-01-01",
     end_date: "2016-12-30",
     column_index: 4
-  }, function(err, stockData){
+  },function(err, stockData){
     if(err){
       console.log(err);
     } else {
@@ -83,68 +95,19 @@ app.get('/test', function(req, res){
         return [new Date(d[0]).getTime(), d[1]];
       });
       stockPrices = highData.reverse();
-      console.log(stockPrices);
-      Stocks.find({}, function(err, foundStocks){
+      Stocks.create({
+        name: stockName,
+        data : stockPrices
+      }, function(err, madeStock){
         if(err){
           console.log(err);
         } else {
-          console.log(foundStocks);
-          res.render('test' ,{stocks: foundStocks});
+          res.redirect('/test');
         }
-      })
+      });
     }
   });
-});
-
-
-// app.get('/', function(req, res){
-//   var stockName = 'FB';
-//   quandl.dataset({
-//   source: "WIKI",
-//   table: stockName
-// }, {
-//   start_date: "2016-01-01",
-//   end_date: "2016-12-30",
-//   column_index: 4
-// }, function(err, stockData){
-//   if(err){
-//     console.log(err);
-//   } else {
-//   var stock = JSON.parse(stockData).dataset;
-//  //  var highData = stock.data.map(function(d){
-//  //   return [new Date(d[0]).getTime(), d[1]];
-//  // });
-//  stockPrices = stock.data.reverse();
-//   res.render('landing', {stockPrices : stockPrices, stockName : stockName, apiKey : keys.Key});
-//     }
-//   });
-// });
-
-
-// app.post('/', function(req, res){
-//   var stockName = req.body.stockName;
-//   quandl.dataset({
-//   source: "WIKI",
-//   table: stockName
-// }, {
-//   start_date: "2016-01-01",
-//   end_date: "2016-12-30",
-//   column_index: 4
-// }, function(err, stockData){
-//
-//   //=======If Stock Name isn't a Nasdaq, redirect back to home page
-//   if(JSON.parse(stockData).quandl_error){
-//     console.log(err);
-//     res.redirect('/');
-//   } else {
-//   var stock = JSON.parse(stockData).dataset;
-//   var highData = stock.data.map(function(d){
-//    return [new Date(d[0]).getTime(), d[1]];
-//  });
-//   res.render('landing', {stockPrices : highData, stockName: stockName, apiKey : keys.Key});
-//     }
-//   });
-// });
+})
 
 app.listen('9000', function(){
   console.log('Stock Chart Starting!');
