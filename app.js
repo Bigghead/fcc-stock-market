@@ -9,7 +9,12 @@ var express     = require('express'),
     app         = express();
 
 
+var mongoUser = process.env.mongoUser || mongoUser,
+    mongoPass = process.env.mongoPass || mongoPass,
+    Key        = process.env.Key || Key,
+    port       = process.env.PORT || 9000;
 
+console.log('User ' + mongoUser);
 //=======DATABASE=====
 mongoose.connect('mongodb://'+ mongoUser +':'+ mongoPass +'@ds111469.mlab.com:11469/fcc-stocks');
 
@@ -126,6 +131,6 @@ app.get('/test/:id', function(req, res){
   });
 });
 
-app.listen('9000', function(){
+app.listen(port, function(){
   console.log('Stock Chart Starting!');
 });
