@@ -61,7 +61,7 @@ app.get('/', function(req, res){
 
 
 //===========ADD A NEW STOCK ONTO CHART=======
-app.post('/test', function(req, res){
+app.post('/', function(req, res){
   var stockName = req.body.stockName.toUpperCase();
 
   //Check if we have the stock in db
