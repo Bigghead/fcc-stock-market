@@ -48,7 +48,7 @@ var quandl = new Quandl({
 
 
 //==============SHOW ALL STOCK LINES ON CHART=====
-app.get('/test', function(req, res){
+app.get('/', function(req, res){
   Stocks.find({}, function(err, foundStocks){
     if(err){
       console.log(err);
