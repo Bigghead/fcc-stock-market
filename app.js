@@ -11,7 +11,7 @@ var express     = require('express'),
 
 
 //=======DATABASE=====
-mongoose.connect('mongodb://'+ keys.mongoUser +':'+ keys.mongoPass +'@ds111469.mlab.com:11469/fcc-stocks');
+mongoose.connect('mongodb://'+ mongoUser +':'+ mongoPass +'@ds111469.mlab.com:11469/fcc-stocks');
 
 var stockSchema = new mongoose.Schema({
   name: String,
@@ -36,7 +36,7 @@ app.use(Method('_method'));
 
 //=========QUANDL CONFIG========
 var quandl = new Quandl({
-  auth_token: keys.Key,
+  auth_token: Key,
   api_version: 3
 })
 
@@ -121,7 +121,6 @@ app.get('/test/:id', function(req, res){
     if(err){
       console.log(err);
     } else {
-      console.log(delStock.name);
       res.redirect('/test');
     }
   });
