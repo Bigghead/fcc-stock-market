@@ -88,7 +88,7 @@ Stocks.findOne({name: stockName}, function(err, foundStock){
          //=======If Stock Name isn't a Nasdaq, redirect back to home page
           if(JSON.parse(stockData).quandl_error){
           console.log(err);
-          res.redirect('/test');
+          res.redirect('/');
         } else {
           var stock = JSON.parse(stockData).dataset;
            var highData = stock.data.map(function(d){
@@ -103,7 +103,7 @@ Stocks.findOne({name: stockName}, function(err, foundStock){
               console.log(err);
             } else {
               madeStock.save();
-              res.redirect('/test');
+              res.redirect('/');
             }
           }); //end stocks.create
         }
@@ -119,14 +119,14 @@ Stocks.findOne({name: stockName}, function(err, foundStock){
 
 
 //==========REMOVE STOCK FROM HOMEPAGE CHART========
-app.get('/test/:id', function(req, res){
+app.get('/:id', function(req, res){
   var id = req.params.id;
 
   Stocks.findByIdAndRemove(id, function(err, delStock){
     if(err){
       console.log(err);
     } else {
-      res.redirect('/test');
+      res.redirect('/');
     }
   });
 });
