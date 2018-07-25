@@ -19,6 +19,7 @@
   "homepage": "https://github.com/Bigghead/fcc-stock-market#readme",
   "dependencies": {
     "async": "^2.1.4",
+    "axios": "^0.18.0",
     "body-parser": "^1.15.2",
     "cors": "^2.8.1",
     "ejs": "^2.5.5",
