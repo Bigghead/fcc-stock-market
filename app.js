@@ -6,6 +6,7 @@ var express     = require('express'),
     Async       = require('async'),
     Method      = require('method-override'),
     Quandl      = require('quandl'),
+    axios       = require('axios');
     app         = express();
 
 
@@ -16,6 +17,7 @@ var mongoUser = process.env.mongoUser || mongoUser,
 
 console.log('User ' + mongoUser);
 //=======DATABASE=====
+mongoose.Promise = global.Promise;
 mongoose.connect('mongodb://'+ mongoUser +':'+ mongoPass +'@ds111469.mlab.com:11469/fcc-stocks');
 
 var stockSchema = new mongoose.Schema({
@@ -49,9 +51,12 @@ var quandl = new Quandl({
 
 //==============SHOW ALL STOCK LINES ON CHART=====
 app.get('/', function(req, res){
+
+  // axios.get(`https://www.quandl.com/api/v3/datasets/WIKI/AAPL.json?api_key${keys.Key}&start_date=2001-01-01&end_date=2018-07-23&order=asc&order=asc&column_index=4`)
+  //      .then( d => res.json(d.data.dataset))
   Stocks.find({}, function(err, foundStocks){
     if(err){
-      console.log(err);
+      console.log(err);      
     } else {
       res.render('test' ,{stocks: foundStocks});
     }
@@ -61,57 +66,34 @@ app.get('/', function(req, res){
 
 
 //===========ADD A NEW STOCK ONTO CHART=======
-app.post('/', function(req, res){
-  var stockName = req.body.stockName.toUpperCase();
+app.post('/', async(req, res) => {
+  const stockName = req.body.stockName.toUpperCase();
 
   //Check if we have the stock in db
   //If yes, redirect, don't let them add the same stock
+  try {
 
-Stocks.findOne({name: stockName}, function(err, foundStock){
-  if(err){
-    console.log(err);
-  } else {
-    if(foundStock !== null){
-      res.redirect('/test');
-    } else {
+    const foundStock = await Stocks.findOne( { name: stockName } );
+    if( foundStock !== null ) return res.redirect('/');
 
+    const stockData = await axios.get(`https://api.iextrading.com/1.0/stock/${stockName}/chart/5y`);
+    const chartData = await stockData.data.map( d => [ 
+      new Date(d['date']).getTime(), d['close']
+    ] );
 
-      //otherwise, fetch quandl data, put into db, and redirect to show all stocks
-      quandl.dataset({
-        source: 'WIKI',
-        table: stockName
-      },{
-        // start_date: "2016-01-01",
-        // end_date: "2016-12-30",
-        column_index: 4
-      },function(err, stockData){
-         //=======If Stock Name isn't a Nasdaq, redirect back to home page
-          if(JSON.parse(stockData).quandl_error){
-          console.log(err);
-          res.redirect('/');
-        } else {
-          var stock = JSON.parse(stockData).dataset;
-           var highData = stock.data.map(function(d){
-            return [new Date(d[0]).getTime(), d[1]];
-          });
-          stockPrices = highData.reverse();
-          Stocks.create({
-            name: stockName,
-            data : stockPrices
-          }, function(err, madeStock){
-            if(err){
-              console.log(err);
-            } else {
-              madeStock.save();
-              res.redirect('/');
-            }
-          }); //end stocks.create
-        }
-      });
+    const newStock = await Stocks.create( {
+      name: stockName,
+      data : chartData
+    } );
 
-    }
+    res.redirect('/');
+    
+  } catch( e ) {
+
+    console.log(e);
+    res.redirect('/');
+
   }
-})
 
 
 });
@@ -119,7 +101,7 @@ Stocks.findOne({name: stockName}, function(err, foundStock){
 
 
 //==========REMOVE STOCK FROM HOMEPAGE CHART========
-app.get('/:id', function(req, res){
+app.get('/stocks/:id', function(req, res){
   var id = req.params.id;
 
   Stocks.findByIdAndRemove(id, function(err, delStock){
