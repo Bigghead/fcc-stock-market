@@ -5,8 +5,6 @@
     <title></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.min.css">
     <link href="/css/styles.css" rel="stylesheet" type="text/css">
-    <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
-        crossorigin="anonymous"></script>
     <script src="https://code.highcharts.com/stock/highstock.js"></script>
     <script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
 
@@ -53,7 +51,7 @@
 
 
     <script type="text/javascript">
-        $(function () {
+        document.addEventListener('DOMContentLoaded', () => {
             
             var stocks = <%- JSON.stringify(stocks)%>;
             var seriesOptions = [],
